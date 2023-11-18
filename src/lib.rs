@@ -1,6 +1,20 @@
 #[cxx::bridge(namespace = "snappy")]
 mod ffi {
-    // ...
+    extern "C++" {
+        include!("snappy-cxx-rs/snappy/snappy.h");
+
+        unsafe fn Compress(
+            input: *const c_char,
+            input_length: usize,
+            compressed: *mut CxxString,
+        ) -> usize;
+
+        unsafe fn Uncompress(
+            input: *const c_char,
+            input_length: usize,
+            uncompressed: *mut CxxString,
+        ) -> bool;
+    }
 }
 
 pub fn compress(input: &[u8]) -> Vec<u8> {
