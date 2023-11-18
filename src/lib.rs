@@ -47,7 +47,33 @@ impl RustVecSink {
 
 #[cxx::bridge(namespace = "snappy")]
 mod ffi {
-    // ...
+    extern "Rust" {
+        type RustSliceSource<'a>;
+
+        fn available(&self) -> usize;
+        fn peek(&mut self, len: &mut usize) -> *const c_char;
+        fn skip(&mut self, n: usize);
+    }
+
+    extern "Rust" {
+        type RustVecSink;
+
+        unsafe fn append(&mut self, bytes: *const c_char, len: usize);
+    }
+
+    unsafe extern "C++" {
+        include!("snappy-cxx-rs/src/adapter.h");
+
+        fn compress_source_to_sink<'a>(
+            uncompressed: Pin<&mut RustSliceSource<'a>>,
+            compressed: Pin<&mut RustVecSink>,
+        ) -> usize;
+
+        fn uncompress_source_to_sink<'a>(
+            compressed: Pin<&mut RustSliceSource<'a>>,
+            uncompressed: Pin<&mut RustVecSink>,
+        ) -> bool;
+    }
 }
 
 #[cfg(test)]
