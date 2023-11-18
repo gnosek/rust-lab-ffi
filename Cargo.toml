@@ -10,5 +10,6 @@ cxx = "1.0.110"
 thiserror = "1.0.50"
 
 [build-dependencies]
+bindgen = "0.69.1"
 cmake = "0.1.50"
 cxx-build = "1.0.110"
